@@ -32,7 +32,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -53,7 +52,7 @@ type Config struct{}
 
 // Parse returns a ConfigContainer with parsed xml config map.
 func (xc *Config) Parse(filename string) (config.Configer, error) {
-	context, err := ioutil.ReadFile(filename)
+	context, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -120,11 +119,11 @@ func (c *ConfigContainer) sub(key string) (map[string]interface{}, error) {
 	}
 	value, ok := c.data[key]
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("the key is not found: %s", key))
+		return nil, fmt.Errorf("the key is not found: %s", key)
 	}
 	res, ok := value.(map[string]interface{})
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("the value of this key is not a structure: %s", key))
+		return nil, fmt.Errorf("the value of this key is not a structure: %s", key)
 	}
 	return res, nil
 }
